@@ -1,7 +1,7 @@
 const http = require('http')
 const { Server } = require('socket.io')
 const express = require('express')
-const { timeStamp } = require('console')
+const { timeStamp, log } = require('console')
 
 
 const app = express()
@@ -9,23 +9,22 @@ const server = new http.createServer(app)
 let room = {};
 
 const io = new Server(server,
-     {
-    cors: {
-        origin: 'http://localhost:3000',
-        method: ['post', 'get']
+    {
+        cors: {
+            origin: 'http://localhost:3000',
+            method: ['post', 'get']
+        }
     }
-}
 )
 
 io.on('connection', (socket) => {
-    console.log(`connected with ${socket.id}`)
-
-    socket.on('join-room', ({roomCode, userName}) => {
-        console.log(room[roomCode]['roomName']);
-
+    console.log('connected');
+    
+    socket.on('join-room', ({ roomCode, userName }) => {
         socket.join(roomCode);
-        
-        socket.to(roomCode).emit('message', { 'message': `${userName} join ${room[roomCode]['roomName']}` })
+        console.log(room);
+        socket.emit('message', { 'message': `You join ${room[roomCode].roomName}` , roomName: room[roomCode]['roomName']? room[roomCode]['roomName']:''})
+        socket.to(roomCode).emit('message', { 'message': `${userName} join ${room[roomCode].roomName}` , roomName: room[roomCode].roomName})
     })
 
     socket.on('user-typing', (({ roomCode, userName }) => {
@@ -37,20 +36,26 @@ io.on('connection', (socket) => {
     }))
 
     socket.on('room-message', ({ roomCode, message, userName }) => {
-        io.to(roomCode).emit('message', {
-            message: message,
+        socket.emit('message', {
+            message,
+            from: 'You',
+            timeStamp : new Date().toLocaleTimeString()
+        });
+
+        socket.to(roomCode).emit('message', {
+            message,
             from: userName || socket.id,
             timeStamp: new Date().toLocaleTimeString()
-        })
+        });
     })
 
     socket.on('create-room', ({ roomCode, roomName, userName }) => {
-        console.log(roomCode, roomName);
+  
         
         room[roomCode] = { roomName, user: [] }
         console.log(room);
         socket.join(roomCode)
-        io.to(roomCode).emit('message', {roomName, roomCode, 'message': `You joined ${room[roomCode]['roomName']}` })
+        io.to(roomCode).emit('message', { roomName, roomCode, 'message': `You join ${room[roomCode]['roomName']}` })
 
     })
     socket.on('disconnect', () => {
