@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
     socket.on('create-room', ({ roomCode, roomName, userName }) => {
   
         
-        room[roomCode] = { roomName, user: [] }
+        room[roomCode] = room[roomCode] || { roomName, users: [] };
         console.log(room);
         socket.join(roomCode)
         io.to(roomCode).emit('message', { roomName, roomCode, 'message': `You join ${room[roomCode]['roomName']}` })
