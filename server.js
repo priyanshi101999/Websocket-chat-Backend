@@ -1,9 +1,9 @@
 const http = require('http')
 const { Server } = require('socket.io')
 const express = require('express')
-const { timeStamp, log } = require('console')
 
 
+const PORT = process.env.PORT || 9090;
 const app = express()
 const server = new http.createServer(app)
 let room = {};
@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
 })
 
 
-server.listen(9090, () => {
-    console.log("server is listening on 9090");
+server.listen(PORT, () => {
+    console.log(`server is listening on ${PORT}`);
 })
 
