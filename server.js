@@ -11,7 +11,7 @@ let room = {};
 const io = new Server(server,
     {
         cors: {
-            origin: 'https://websocket-chat-git-master-priyanshi-tripathis-projects.vercel.app/',
+            origin: 'https://websocket-chat-git-master-priyanshi-tripathis-projects.vercel.app',
             method: ['post', 'get']
         }
     }
