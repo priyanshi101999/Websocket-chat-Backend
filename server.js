@@ -1,17 +1,17 @@
 const http = require('http')
 const { Server } = require('socket.io')
 const express = require('express')
-
-
+const cors = require('cors');
 const PORT = process.env.PORT || 9090;
 const app = express()
+app.use(cors())
 const server = new http.createServer(app)
 let room = {};
 
 const io = new Server(server,
     {
         cors: {
-            origin: 'http://localhost:3000',
+            origin: 'https://websocket-chat-gos68qc5r-priyanshi-tripathis-projects.vercel.app',
             method: ['post', 'get']
         }
     }
