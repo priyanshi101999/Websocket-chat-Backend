@@ -68,3 +68,8 @@ server.listen(PORT, () => {
     console.log(`server is listening on ${PORT}`);
 })
 
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
+
